@@ -1,0 +1,7 @@
+PyPDF2
+python-docx
+streamlit
+gTTS
+pyngrok
+langchain==0.0.302
+openai==0.27.0
