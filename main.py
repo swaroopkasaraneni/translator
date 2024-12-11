@@ -24,12 +24,22 @@ def alertMessageHtml(msg):
        {msg} 
     </div>
     """
+def headerText(text):
+  return f"""
+    <div style="
+        color: blue; 
+        font-size: 16px; 
+        font-weight: bold;
+    ">
+       {text} 
+    </div>
+    """
 
 st.title("Translation Application")
 
 col1, col2 = st.columns([2, 2])  # Adjust column width proportions if needed
 with col1:
-    selected_language = st.selectbox("Select language", list(language_dict.keys()))
+    selected_language = st.selectbox("Select Translate language", list(language_dict.keys()))
 
 with col2:
     slow_speech = st.checkbox("Slow speech")
@@ -52,20 +62,15 @@ if uploaded_file is not None:
   else:
     st.markdown(alertMessageHtml("file is not supported"), unsafe_allow_html=True)
 
-
-# Display the corresponding value (language code)
-st.write(f"You selected: {selected_language} ({language_dict[selected_language]})")
-
 try:
   if text:
-      st.write("Translation:")
-      tran_text = LLMExecuter.executeGooglePalm(text,"English",selected_language)
+      tran_text = LLMExecuter.executeOpenAI("English",selected_language,text)
+      st.markdown(headerText("Translated Text:"), unsafe_allow_html=True)
       st.write(tran_text)
       audio_file = AudioConvertor.textToSpeech(tran_text,language_dict[selected_language],slow_speech)
       # Display audio player in Streamlit
       st.audio(audio_file, format="audio/mp3")
       # Play the audio
-      st.write("Playing your text as speech...")
       ipd.display(ipd.Audio(audio_file))
   else:
     st.markdown(alertMessageHtml('provide the Data for Translation'), unsafe_allow_html=True)    
