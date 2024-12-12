@@ -39,10 +39,10 @@ st.title("Translation Application")
 
 col1, col2 = st.columns([2, 2])  # Adjust column width proportions if needed
 with col1:
-    selected_language = st.selectbox("Select Translate language", list(language_dict.keys()))
+    input_language = st.selectbox("Input language", list(language_dict.keys()))
 
 with col2:
-    slow_speech = st.checkbox("Slow speech")
+    translate_language = st.selectbox("Translate language", list(language_dict.keys()))
 
 text = st.text_input("Text: ")
 uploaded_file  = st.file_uploader("Upload a file and supporting format:pdf,docx,txt,csv,xlsx:")
@@ -64,10 +64,14 @@ if uploaded_file is not None:
 
 try:
   if text:
-      tran_text = LLMExecuter.executeOpenAI("English",selected_language,text)
+      if(input_language == translate_language):
+         tran_text = text
+      else:   
+         tran_text = LLMExecuter.executeOpenAI(input_language,translate_language,text)
+         
       st.markdown(headerText("Translated Text:"), unsafe_allow_html=True)
       st.write(tran_text)
-      audio_file = AudioConvertor.textToSpeech(tran_text,language_dict[selected_language],slow_speech)
+      audio_file = AudioConvertor.textToSpeech(tran_text,language_dict[translate_language],False)
       # Display audio player in Streamlit
       st.audio(audio_file, format="audio/mp3")
       # Play the audio
